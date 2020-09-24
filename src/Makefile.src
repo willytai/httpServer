@@ -1,0 +1,48 @@
+CSRCS = $(wildcard *.c)
+CHDRS = $(wildcard *.h)
+COBJS = $(addsuffix .o, $(basename $(CSRCS)))
+
+
+DEPENDDIR =
+DEPENDLIB =
+
+STATIC ?= false
+TSAN  ?= false
+ASAN  ?= false
+CXX    = g++ 
+CCC    = gcc
+AR     = ar cr
+ECHO   = /bin/echo
+DIRS   = bin
+
+TARGET = ../bin/$(EXEC)
+
+CFLAGS = -std=c99 -O3 $(DEPENDDIR) #-fopenmp -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free -ljemalloc
+
+ifeq ($(STATIC), true)
+CFLAGS += -static
+endif
+
+CFLAGS += -Wall -Wextra -pedantic-errors -Wconversion -Werror
+
+.PHONY: depend
+
+all: $(COBJS)
+	@$(ECHO) "> building -> $(EXEC) ..."
+	@$(CCC) $(CFLAGS) $(COBJS) -o $(TARGET) $(DEPENDLIB)
+
+%.o: %.c
+	@$(ECHO) "> compiling: $< ..."
+	@$(CCC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	@rm -rf $(COBJS)
+	@rm -rf $(TARGET)
+
+## Make dependencies
+depend: .depend.mak
+.depend.mak: $(CSRCS) $(CHDRS)
+	@$(ECHO) Making dependencies ...
+	@$(CCC) -MM $(DEPENDDIR) $(CSRCS) > $@
+
+include .depend.mak
