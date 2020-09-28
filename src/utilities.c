@@ -6,6 +6,7 @@ size_t fileRead(const char* filename, char* buffer) {
     FILE* fp;
     if ((fp=fopen(filename, "r")) == NULL) { // read & binary
         perror("Unable to open file");
+        printf("target file: %s\n", filename);
         return FILE_ERROR;
     }
     fseek(fp, 0L, SEEK_END);
@@ -59,7 +60,7 @@ void getFileType(const char* suf, char* type) {
     else if (!strcmp(suf, "html")) strcpy(type, "text/html");
     else if (!strcmp(suf, "css")) strcpy(type, "text/css");
     else if (!strcmp(suf, "xml")) strcpy(type, "text/xml");
+    else if (!strcmp(suf, "js")) strcpy(type, "text/javascript");
     else if (!strcmp(suf, "zip")) strcpy(type, "application/zip");
-    else if (!strcmp(suf, "js")) strcpy(type, "application/javascript");
     else strcpy(type, "text/plain");
 }
